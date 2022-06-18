@@ -7,49 +7,32 @@
 
 import UIKit
 
-protocol SplashAnimatorProtocol: AnyObject {
-    func animateAppearance()
-    func animateDisappearance(completion: @escaping () -> Void)
-}
-
 final class SplashAnimator {
     
     // MARK: Properties
     
-    private static var screenBounds = UIScreen.main.bounds
-    
-    private static let blackgroundView: UIView = {
+    static let blackgroundView: UIView = {
         let view = UIView(frame: screenBounds)
         view.backgroundColor = .white
-        let test = UIActivityIndicatorView()
-        test.startAnimating()
         return view
     }()
 
-    private static let heartImageView: UIImageView = {
+    static let heartImageView: UIImageView = {
         let imageViewSide: CGFloat = 120.0
-        let imageView = UIImageView(frame: CGRect(x: (screenBounds.width - imageViewSide) / 2, y: (screenBounds.height - imageViewSide) / 2, width: imageViewSide, height: imageViewSide))
+        let imageView = UIImageView(frame: CGRect(x: (screenWidth - imageViewSide) / 2, y: (screenHeight - imageViewSide) / 2, width: imageViewSide, height: imageViewSide))
         imageView.image = UIImage(named: "heart")
         return imageView
     }()
     
     // MARK: Methods
     
-    private static func startHeartAnimation() {
+    static func startHeartAnimation() {
         UIView.animate(withDuration: 0.3, delay: 0.5, options: [.autoreverse, .repeat]) {
             heartImageView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
         }
     }
     
-    static func animateAppearance() {
-        if let keyWindow = UIApplication.shared.keyWindow {
-            keyWindow.addSubview(blackgroundView)
-            keyWindow.addSubview(heartImageView)
-            startHeartAnimation()
-        }
-    }
-    
-    static func animateDisappearance(completion: @escaping () -> Void) {
+    static func stopHeartAnimation(completion: @escaping () -> Void) {
         guard let keyWindow = UIApplication.shared.keyWindow else { return }
         
         blackgroundView.removeFromSuperview()
@@ -57,8 +40,8 @@ final class SplashAnimator {
         
         let mask = CALayer()
         let imageViewSide: CGFloat = 120.0
-        mask.frame = CGRect(x: (screenBounds.width - imageViewSide) / 2, y: (screenBounds.height - imageViewSide) / 2, width: imageViewSide, height: imageViewSide)
-        mask.contents = heartImageView.image?.cgImage
+        mask.frame = CGRect(x: (screenWidth - imageViewSide) / 2, y: (screenHeight - imageViewSide) / 2, width: imageViewSide, height: imageViewSide)
+        mask.contents = UIImage(named: "heart")?.cgImage
         keyWindow.layer.mask = mask
         
         let maskBackgroundView = UIImageView(image: heartImageView.image)
@@ -97,7 +80,7 @@ final class SplashAnimator {
         let width = layer.frame.size.width
         let height = layer.frame.size.height
         let coeficient: CGFloat = 18 / 667
-        let finalScale = UIScreen.main.bounds.height * coeficient
+        let finalScale = screenHeight * coeficient
         let scales = [1, 0.85, finalScale]
         
         animation.beginTime = CACurrentMediaTime() + delay

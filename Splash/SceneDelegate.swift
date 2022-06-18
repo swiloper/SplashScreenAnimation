@@ -10,12 +10,39 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    private var foregroundWindow: UIWindow!
+    private var backgroundWindow: UIWindow!
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        showForegroundWindow()
+        SplashAnimator.startHeartAnimation()
+        showBackgroundWindow()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            SplashAnimator.stopHeartAnimation {
+                self.foregroundWindow = nil
+                self.backgroundWindow = nil
+            }
+        }
+    }
+    
+    private func showForegroundWindow() {
+        if let keyWindow = window, let keyScene = keyWindow.windowScene {
+            foregroundWindow = UIWindow(windowScene: keyScene)
+            foregroundWindow.frame = keyWindow.frame
+            foregroundWindow.rootViewController = SplashViewController()
+            foregroundWindow.windowLevel = .normal + 1
+            foregroundWindow.isHidden = false
+        }
+    }
+
+    private func showBackgroundWindow() {
+        if let keyWindow = window, let keyScene = keyWindow.windowScene {
+            backgroundWindow = UIWindow(windowScene: keyScene)
+            backgroundWindow.frame = keyWindow.frame
+            backgroundWindow.backgroundColor = .white
+            backgroundWindow.windowLevel = .normal - 1
+            backgroundWindow.isHidden = false
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -45,7 +72,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-
 }
 

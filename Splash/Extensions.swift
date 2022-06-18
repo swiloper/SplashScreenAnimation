@@ -7,6 +7,10 @@
 
 import UIKit
 
+let screenBounds = UIScreen.main.bounds
+let screenHeight = UIScreen.main.bounds.height
+let screenWidth = UIScreen.main.bounds.width
+
 extension UIApplication {
     var keyWindow: UIWindow? {
         let connectedScenes = UIApplication.shared.connectedScenes
